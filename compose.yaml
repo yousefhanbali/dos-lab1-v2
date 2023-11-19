@@ -1,6 +1,8 @@
 services:
   category:
     build: category
+    volumes:
+      - ./Category/app:/lumen/app
   purchase:
     build: purchase
     depends_on:

@@ -16,9 +16,6 @@ RUN apt-get install nginx -y
 
 # Installing required PHP modules
 RUN apt-get install php -y
-RUN apt-get install php-phar -y
-RUN apt-get install php-xml -y
-
 
 # Installing composer in order to install Lumen
 RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');" && \
@@ -26,7 +23,7 @@ RUN php -r "copy('http://getcomposer.org/installer', 'composer-setup.php');" && 
     php -r "unlink('composer-setup.php');"
 
 # Move our app into the docker
-COPY . /lumen
+RUN mkdir -p /lumen/app
 WORKDIR /lumen/app
 
 CMD ["php", "-S","0.0.0.0:8000", "-t", "public"]

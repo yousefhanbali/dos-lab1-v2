@@ -36,7 +36,7 @@ class CsvService
                 return new Book($book[0], $book[1], $book[2], intval($book[3]), intval($book[4]));
             }
         }
-        return $data;
+        return null;
     }
 
     public static function GetBooksBySubject($subject)
@@ -44,7 +44,7 @@ class CsvService
         $data = self::LoadData();
         $matchingBooks = [];
         foreach ($data as $book) {
-            if ($book[2] == $subject) {
+            if (strtolower($book[2]) == strtolower($subject)) {
                 $matchingBooks[] = new Book($book[0], $book[1], $book[2], intval($book[3]), intval($book[4]));
             }
         }
