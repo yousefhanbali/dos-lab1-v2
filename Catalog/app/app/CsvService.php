@@ -16,6 +16,8 @@ class CsvService
             return self::$data;
         }
         $file = fopen(self::fileName, "r");
+        self::$data = [];
+        rewind($file);
         while (!feof($file)) {
             $temp = fgetcsv($file);
             if ($temp == null)
@@ -67,6 +69,9 @@ class CsvService
     private static function WriteData()
     {
         $data = self::LoadData();
+        $fp = fopen(self::fileName, 'w');
+        ftruncate($fp, 0);
+        fclose($fp);
         $fp = fopen(self::fileName, 'w');
         rewind($fp);
         foreach ($data as $fields) {

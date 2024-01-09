@@ -1,0 +1,39 @@
+services:
+  catalog:
+    build: catalog
+    volumes:
+      - ./Catalog/app:/lumen/app
+    environment:
+      - FRONTEND_SERVER=frontend
+      - FRONTEND_PORT=3000
+      - CATEGORY_SERVER=catalog
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+  purchase:
+    build: purchase
+    depends_on:
+      - catalog
+    environment:
+      - CATEGORY_SERVER=catalog
+      - CATEGORY_PORT=8000
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+  frontend:
+    build: frontend
+    depends_on:
+      - catalog
+      - purchase
+    environment:
+      - CATEGORY_SERVER=catalog
+      - PURCHASE_SERVER=purchase
+      - CATEGORY_PORT=8000
+      - PURCHASE_PORT=4567
+      - ENABLE_CACHING=true
+      - CACHE_SIZE=10
+      - PORT=3000
+    ports:
+      - 3000:3000

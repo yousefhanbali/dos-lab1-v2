@@ -21,3 +21,5 @@ $router->get('/', function () use ($router) {
 $router->get('/search/{subject}', 'CatalogController@getBooksBySubject');
 $router->get('/book/{id}', 'CatalogController@getBookById');
 $router->put('/book/{id}', 'CatalogController@updateBookById');
+$router->put('/purchase/{id}', 'CatalogController@purchaseBookById');
+$router->post('/notify', 'CatalogController@receiveNotify');

@@ -15,11 +15,16 @@ public class CatalogServiceImp implements CatalogService {
     private final String url;
     private final String bookEndpoint = "/book/";
 
-    public CatalogServiceImp(){
+    private final String purchaseEndpoint = "/purchase/";
+
+    public CatalogServiceImp() {
         Map<String, String> enviromentVariables = System.getenv();
         String categoryKey = enviromentVariables.get("CATEGORY_SERVER");
-        this.url = "http://"+ (categoryKey == null ? "category:8000" : categoryKey);
+        String categoryPort = enviromentVariables.get("CATEGORY_PORT");
+        this.url = "http://"
+                + (categoryKey == null || categoryPort == null ? "catalog:8000" : categoryKey + ":" + categoryPort);
     }
+
     public Book getBookById(int id) throws IOException {
         URL obj = new URL(url + bookEndpoint + id);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -46,31 +51,9 @@ public class CatalogServiceImp implements CatalogService {
     }
 
     public int purchaseBook(int id) throws IOException {
-        Book book = this.getBookById(id);
-        if (book == null)
-            return 404; // Book not found
-
-        if (book.quantity == 0)
-            return 400; // Book out of stock
-
-        book.quantity--;
-
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        String jsonString = gson.toJson(book);
-
-        URL obj = new URL(url + bookEndpoint + id);
+        URL obj = new URL(url + purchaseEndpoint + id);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("PUT");
-        con.setRequestProperty("Content-Type", "application/json");
-
-        // For POST only - START
-        con.setDoOutput(true);
-        OutputStream os = con.getOutputStream();
-        os.write(jsonString.getBytes());
-        os.flush();
-        os.close();
-        // For POST only - END
 
         return con.getResponseCode();
     }
